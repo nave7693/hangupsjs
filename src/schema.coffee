@@ -17,6 +17,7 @@ s.TypingStatus =
 
 s.FocusStatus =
 
+    UNKNOWN : 0
     FOCUSED : 1
     UNFOCUSED : 2
 
@@ -162,6 +163,16 @@ s.CLIENT_ENTITY = Message([
         'first_name',   Field()
         'photo_url',    Field()
         'emails',       RepeatedField(Field())
+        'phones',       RepeatedField(Field())
+        None, Field()
+        None, Field()
+        None, Field()
+        'in_users_domain',  Field()
+        'gender',           Field()
+        'photo_url_status', Field()
+        None, Field()
+        None, Field()
+        'canonical_email',  Field()
     ])
 ])
 
@@ -301,16 +312,21 @@ s.PLUS_PHOTO = Message([
 ])
 
 # Special numbers make up the property names of things in the embedded item
-s.EMBED_ITEM = DictField({
-    '27639957': s.PLUS_PHOTO,
-    '35825640': Field()       # not supporting maps yet
-})
+s.EMBED_ITEM = Message([
+    'type_', RepeatedField(Field()) # EnumField(s.ItemType))
+    'data', Field()
+    'plus_photo', DictField({
+        '27639957': [s.PLUS_PHOTO, 'data'],
+    })
+    'places', DictField({
+        '35825640': [Field(), 'data']
+    })
+])
 
 s.MESSAGE_ATTACHMENT = Message([
-    'embed_item', Message([
-        'type', RepeatedField(EnumField(s.ItemType))
-        'data', s.EMBED_ITEM    # this is a dictionary, which is like an ordinary object that has members that need to be looked up using a tag number
-    ])
+    #'type_', RepeatedField(EnumField(s.ItemType))
+    #'data', Field()
+    'embed_item', s.EMBED_ITEM
 ])
 
 s.CLIENT_CHAT_MESSAGE = Message([
@@ -392,25 +408,6 @@ s.CLIENT_CONVERSATION_STATE = Message([
 ])
 
 s.CLIENT_CONVERSATION_STATE_LIST = RepeatedField(s.CLIENT_CONVERSATION_STATE)
-
-s.CLIENT_ENTITY = Message([
-    None, Field()
-    None, Field()
-    None, Field()
-    None, Field()
-    None, Field()
-    None, Field()
-    None, Field()
-    None, Field()
-    'id', s.USER_ID
-    'properties', Message([
-        'type', Field()  # 0, 1, or ''
-        'display_name', Field()
-        'first_name', Field()
-        'photo_url', Field()
-        'emails', RepeatedField(Field())
-    ])
-])
 
 s.ENTITY_GROUP = Message([
     None, Field() # always 0?

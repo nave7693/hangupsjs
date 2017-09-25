@@ -33,10 +33,20 @@ class DictField
         return null unless input
         return null if input == undefined
         input = input.toString() if input instanceof Buffer
-        obj = if typeis input, 'string' then eval input else input
+        try
+            obj = if typeis input, 'string' then eval input else input
+        catch error
+            log.error 'Problem with DICT field', input
+            return @value = if input == undefined then null else input
         out = {}
         for prop, val of @dict
-            out[prop] = val.parse obj[prop] if obj[prop]
+            out_prop = prop
+            out_val = val
+            if val.constructor == Array
+                out_val = val[0]
+                if val.length > 1
+                    out_prop = val[1]
+            out[out_prop] = out_val.parse obj[prop] if obj[prop]
         out
 
 class RepeatedField

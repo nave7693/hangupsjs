@@ -17,6 +17,7 @@ Auth            = require './auth'
 Init            = require './init'
 
 {OffTheRecordStatus,
+FocusStatus,
 TypingStatus,
 MessageActionType,
 ClientDeliveryMediumType,
@@ -292,12 +293,14 @@ module.exports = class Client extends EventEmitter
 
 
     # Set focus (occurs whenever you give focus to a client).
-    setfocus: (conversation_id) ->
+    #
+    # focus must be a FocusStatus enum.
+    setfocus: (conversation_id, focus=FocusStatus.FOCUSED, timeoutsecs=20) ->
         @chatreq.req 'conversations/setfocus', [
             @_requestBodyHeader()
             [conversation_id]
-            1
-            20
+            focus
+            timeoutsecs
         ]
 
 
@@ -443,11 +446,11 @@ module.exports = class Client extends EventEmitter
     # This is mainly used for retrieving conversation
     # scrollback. Events occurring before timestamp are returned, in
     # order from oldest to newest.
-    getconversation: (conversation_id, timestamp, max_events=50) ->
+    getconversation: (conversation_id, timestamp, max_events=50, include_metadata = false) ->
         @chatreq.req('conversations/getconversation', [
             @_requestBodyHeader()
             [[conversation_id], [], []],  # conversationSpec
-            false,                        # includeConversationMetadata
+            include_metadata,             # includeConversationMetadata
             true,                         # includeEvents
             None,                         # ???
             max_events,                   # maxEventsPerConversation
@@ -602,6 +605,7 @@ aliases.forEach((alias) ->
 
 # Expose these as part of publich API
 Client.OffTheRecordStatus = OffTheRecordStatus
+Client.FocusStatus        = FocusStatus
 Client.TypingStatus       = TypingStatus
 Client.MessageActionType  = MessageActionType
 Client.MessageBuilder     = MessageBuilder

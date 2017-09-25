@@ -1,6 +1,19 @@
 hangupsjs
 =========
 
+### 2017-09-15 v1.3.5
+
+Adds additional fields to ENTITY schema
+Updates the subscribe method to only `babel` and `babel_presence_last_seen`
+
+### 2016-12-05 v1.3.4
+
+Add support for conversation metadata fetching
+
+### 2016-12-01 v1.3.3
+
+Fixes a breaking change of the google apis.
+
 ### 2016-01-15 v1.3.2
 
 This is a minor release. It does not solve login problems that are related to
@@ -443,11 +456,16 @@ Pass `Client.NotificationLevel.QUIET` to disable notifications, or
 
 #### `setfocus`
 
-`setfocus: (conversation_id) ->`
+`setfocus: (conversation_id, focus=FocusStatus.FOCUSED, timeoutsecs=20) ->`
 
 Set focus (occurs whenever you give focus to a client).
 
 `conversation_id`: the conversation you are focusing.
+
+`typing`: constant indicating focus status. One of
+`Client.FocusStatus.FOCUSED` or `Client.FocusStatus.UNFOCUSED`
+
+`timeoutsecs`: the length of focus in seconds.
 
 
 
